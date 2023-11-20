@@ -1,0 +1,42 @@
+# took from first group project (curated by Igor)
+
+name: flake8
+
+# This workflow tests the uploaded code for compliance with PEP8 and is adapted from the workflow created by Rhodri Nelson available
+# in the lecture materials accessed at: https://github.com/rhodrin/ci_mpm. The Python setup is made to match previous
+# workflow definitions in the repository.
+
+on:
+   # Trigger the workflow on push or pull request,
+   # but only for the master branch
+   push:
+     branches:
+       - main
+   pull_request:
+     branches:
+       - main
+
+jobs:
+
+  flake8:
+  
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    # Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install flake8
+        
+    # Lint
+    - name: Lint with flake8
+      run: |
+        flake8 .

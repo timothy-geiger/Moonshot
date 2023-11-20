@@ -1,0 +1,61 @@
+# took from first group project (curated by Igor)
+
+name: update_docs
+
+# This workflow is run on push/ pull request on the main branch. It generates a sphinx documentation as in html and pdflatex files.
+
+on:
+   push:
+     branches:
+       - main
+   pull_request:
+     branches:
+       - main
+
+jobs:
+  update_sphinx_docs:
+
+    runs-on: ubuntu-latest
+    env:
+      CI_COMMIT_MESSAGE: Automatic Sphinx Docs Update
+      CI_COMMIT_AUTHOR: Continuous Integration
+      CI_COMMIT_EMAIL: itk22@ic.ac.uk
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -e .
+        pip install -r requirements.txt
+        sudo apt-get install texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
+        
+    - name: Update the docs
+      run: |
+        sphinx-build -b html docs docs/html
+        sphinx-build -b latex docs docs/latex
+        cd docs/latex
+        pdflatex moonshot.tex
+        pdflatex moonshot.tex
+        cd ..
+        cd ..
+        
+    - name: Commit files
+      run: |
+        git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+        git config --global user.email "${{ env.CI_COMMIT_EMAIL }}"
+        git add docs/html/index.html
+        git add docs/latex/moonshot.pdf
+        git commit -m "${{ env.CI_COMMIT_MESSAGE}}"
+        
+    - name: Push updated files
+      uses: ad-m/github-push-action@master
+      if: ${{steps.new-configs.outputs.new_configurations}} == true
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}

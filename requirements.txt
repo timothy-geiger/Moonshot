@@ -1,0 +1,20 @@
+numpy >= 1.13.0
+scipy
+sympy
+pandas
+matplotlib
+mpltools
+pytest
+pytest-timeout
+sphinx
+distributed
+googledrivedownloader
+folium
+sphinxcontrib-napoleon
+sphinx-press-theme
+flake8
+gdown
+torch
+torchvision
+PyQt5
+opencv-python
